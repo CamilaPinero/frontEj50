@@ -1,19 +1,13 @@
+import { Outlet, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import ModificarTablaUsuarios from "./ModificarTablaUsuarios";
 import { deleteUser } from "./ApiMethods";
 export default function TablaUsuarios() {
+	const navigate = useNavigate();
 	const [usuarios, setUsuarios] = useState([]);
 	const [isLoading, setLoading] = useState(true);
-	const [mostrarTabla, setMostrarTabla] = useState(false);
-	const [usuarioId, setUsuarioId] = useState(null);
-	const [nombreForm, setNombreForm] = useState("Crear nuevo");
 
-	function handleMostrarTabla(id) {
-		setNombreForm("Editar");
-
-		setUsuarioId(id);
-
-		setMostrarTabla(true);
+	function handleMostrarTablaEdicion(id) {
+		navigate(`modificar-usuario/${id}`);
 	}
 
 	const fetchUsuarios = async () => {
@@ -49,7 +43,7 @@ export default function TablaUsuarios() {
 					<h5>Usuarios</h5>
 					<button
 						className="btn-sm btn btn-outline-primary"
-						onClick={() => setMostrarTabla(true)}
+						onClick={() => navigate("nuevo-usuario")}
 					>
 						Nuevo Usuario
 					</button>
@@ -97,7 +91,7 @@ export default function TablaUsuarios() {
 												<button
 													className="btn btn-sm edit"
 													onClick={() =>
-														handleMostrarTabla(
+														handleMostrarTablaEdicion(
 															usuario.id
 														)
 													}
@@ -140,16 +134,7 @@ export default function TablaUsuarios() {
 					</table>
 				</div>
 			</div>
-			{mostrarTabla && (
-				<ModificarTablaUsuarios
-					fetchUsuarios={fetchUsuarios}
-					setMostrarTabla={setMostrarTabla}
-					usuarios={usuarios}
-					usuarioId={usuarioId}
-					setUsuarioId={setUsuarioId}
-					nombreForm={nombreForm}
-				/>
-			)}
+			<Outlet />
 		</div>
 	);
 }

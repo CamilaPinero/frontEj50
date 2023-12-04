@@ -5,12 +5,17 @@ import ModificarTablaUsuarios from "./components/ModificarTablaUsuarios";
 function App() {
 	return (
 		<Router>
-			<TablaUsuarios />
 			<Routes>
-				<Route
-					path="/modificar-usuario"
-					element={<ModificarTablaUsuarios />}
-				/>
+				<Route path="/tabla-usuarios" element={<TablaUsuarios />}>
+					<Route
+						path="modificar-usuario/:usuarioId"
+						element={<ModificarTablaUsuarios />}
+					/>
+					<Route
+						path="nuevo-usuario"
+						element={<ModificarTablaUsuarios />}
+					/>
+				</Route>
 			</Routes>
 		</Router>
 	);

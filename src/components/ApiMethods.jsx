@@ -1,4 +1,5 @@
 /* eslint-disable no-unused-vars */
+
 export async function createUser(user) {
 	try {
 		const response = await fetch("http://localhost:3000/usuarios", {
@@ -54,6 +55,23 @@ export async function deleteUser(userId) {
 		if (!response.ok) {
 			throw new Error(`HTTP error! Status: ${response.status}`);
 		}
+	} catch (error) {
+		console.error("Error:", error);
+	}
+}
+
+export async function getUserById(userId) {
+	try {
+		const response = await fetch(
+			`http://localhost:3000/usuarios/${userId}`,
+			{
+				method: "GET",
+			}
+		);
+		if (!response.ok) {
+			throw new Error(`HTTP error! Status: ${response.status}`);
+		}
+		return response.json();
 	} catch (error) {
 		console.error("Error:", error);
 	}

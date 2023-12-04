@@ -1,16 +1,13 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-mixed-spaces-and-tabs */
 import { useEffect, useState } from "react";
-import { createUser, updateUser } from "./ApiMethods";
+import { createUser, getUserById, updateUser } from "./ApiMethods";
+import { useNavigate, useParams } from "react-router-dom";
 
-export default function ModificarTablaUsuarios({
-	fetchUsuarios,
-	setMostrarTabla,
-	usuarios,
-	usuarioId,
-	setUsuarioId,
-	nombreForm,
-}) {
+export default function ModificarTablaUsuarios() {
+	const navigate = useNavigate();
+	const { usuarioId } = useParams();
 	const usuarioInicial = {
 		user: "",
 		password: "",
@@ -18,15 +15,12 @@ export default function ModificarTablaUsuarios({
 		is_premium: 0,
 		birthdate: "",
 	};
-
 	const [nuevoUsuario, setNuevoUsuario] = useState(usuarioInicial);
 
-	useEffect(() => {
-		if (usuarioId) {
-			let usuario = usuarios.find((u) => u.id === usuarioId);
-			setNuevoUsuario(usuario);
-		}
-	}, [usuarioId, usuarios]);
+	async function fetchUsuario() {
+		const usuario = await getUserById(usuarioId);
+		setNuevoUsuario(...usuario);
+	}
 
 	function handleNuevoUsuarioChange(e) {
 		setNuevoUsuario({ ...nuevoUsuario, [e.target.name]: e.target.value });
@@ -37,17 +31,18 @@ export default function ModificarTablaUsuarios({
 		//si no usuarioId === null el formulario es para crear un usuario nuevo, de lo contrario es de edicion
 		if (!usuarioId) {
 			await createUser(nuevoUsuario);
-			fetchUsuarios();
 			setNuevoUsuario(usuarioInicial);
-			setMostrarTabla(false);
 		} else {
 			await updateUser(usuarioId, nuevoUsuario);
-			fetchUsuarios();
 			setNuevoUsuario(usuarioInicial);
-			setMostrarTabla(false);
-			setUsuarioId(null);
 		}
 	}
+
+	useEffect(() => {
+		if (usuarioId) {
+			fetchUsuario();
+		}
+	}, [usuarioId]);
 
 	return (
 		<>
@@ -55,7 +50,9 @@ export default function ModificarTablaUsuarios({
 				<div className="dialog">
 					<div className="content">
 						<div className="cardHeaders">
-							<h5 className="title">{nombreForm} usuario</h5>
+							<h5 className="title">
+								{usuarioId ? "Editar" : "Nuevo"} usuario
+							</h5>
 						</div>
 						<form id="usuarios-form" onSubmit={handleSubmit}>
 							<div className="cardBody">
@@ -174,7 +171,7 @@ export default function ModificarTablaUsuarios({
 								<button
 									type="button"
 									className="btn btn-secondary btn-sm"
-									onClick={() => setMostrarTabla(false)}
+									onClick={() => navigate("/tabla-usuarios")}
 								>
 									Close
 								</button>
